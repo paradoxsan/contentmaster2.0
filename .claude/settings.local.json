@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm create vite@latest . -- --template react-ts)",
+      "Bash(npm install react react-dom react-router-dom firebase date-fns)",
+      "Bash(npm install -D typescript @types/react @types/react-dom @vitejs/plugin-react vite tailwindcss @tailwindcss/vite)",
+      "Bash(npm install)",
+      "Bash(npx tsc --noEmit)",
+      "Bash(npx vite build)",
+      "Bash(npx tsc)",
+      "Bash(printf '# Meta App Credentials\\\\nMETA_APP_ID=1913467659268354\\\\nMETA_APP_SECRET=0ebafeb30debb7fc9e4dd5e9c1dea413\\\\n\\\\n# Page Access Token \\(provided directly\\)\\\\nMETA_PAGE_ACCESS_TOKEN=EAAbMSegesQIBQ40gZBf9aLGlVaZBXfyFgodu8WzuJwbZCoZABTYiTeSwXjgsanrZBNLNW0kZAu8hplcWYw0nP4m2mJlZAxa2dwPU74tSdl9hNPWyO3W8JWdsMaX8IT24h9y8WoOxA4BZBBicfQhduoGp3ryXYfW3v3k3xX3OeXz5bwFmDl92QZA8dqyTChLJj\\\\n\\\\n# Optional: encryption key for stored tokens\\\\nTOKEN_ENCRYPTION_KEY=\\\\n')",
+      "Bash(printf '# Firebase Configuration\\\\nVITE_FIREBASE_API_KEY=AIzaSyB9H8awb1QCxbVCboZYxFuQ83txdMe9Mn0\\\\nVITE_FIREBASE_AUTH_DOMAIN=content-master-376a5.firebaseapp.com\\\\nVITE_FIREBASE_PROJECT_ID=content-master-376a5\\\\nVITE_FIREBASE_STORAGE_BUCKET=content-master-376a5.appspot.com\\\\nVITE_FIREBASE_MESSAGING_SENDER_ID=667743809337\\\\nVITE_FIREBASE_APP_ID=1:667743809337:web:3f047d770cf18985c1c2e8\\\\n\\\\n# Meta App Configuration \\(public client ID only — secret stays on backend\\)\\\\nVITE_META_APP_ID=1913467659268354\\\\n')"
+    ]
+  }
+}
