@@ -29,17 +29,18 @@ exports.metaOAuthStart = (0, https_1.onRequest)(async (req, res) => {
         res.status(401).json({ error: "Invalid token" });
         return;
     }
-    const redirectUri = `${req.headers.origin ?? "http://localhost:5175"}/auth/meta/callback`;
+    const appUrl = process.env.FRONTEND_URL ?? "http://localhost:5173";
+    const redirectUri = `${req.headers.origin ?? appUrl}/auth/meta/callback`;
     const state = Buffer.from(JSON.stringify({ uid, ts: Date.now() })).toString("base64url");
     // Save state to Firestore so we can verify it on callback
-    await firebase_1.db.collection("oauthStates").doc(state).set({ uid, createdAt: new Date() });
+    await firebase_1.db.collection("oauthStates").doc(state).set({ uid, redirectUri, createdAt: new Date() });
     const oauthUrl = (0, meta_auth_service_1.buildOAuthUrl)(redirectUri, state);
     res.json({ url: oauthUrl });
 });
 // Handles the redirect back from Meta after user approves
 exports.metaOAuthCallback = (0, https_1.onRequest)(async (req, res) => {
     const { code, state, error } = req.query;
-    const appUrl = "http://localhost:5175";
+    const appUrl = process.env.FRONTEND_URL ?? "http://localhost:5173";
     if (error) {
         v2_1.logger.warn("Meta OAuth denied by user", { error });
         res.redirect(`${appUrl}/accounts?error=access_denied`);
@@ -55,10 +56,10 @@ exports.metaOAuthCallback = (0, https_1.onRequest)(async (req, res) => {
         res.redirect(`${appUrl}/accounts?error=invalid_state`);
         return;
     }
-    const { uid } = stateDoc.data();
+    const { uid, redirectUri: savedRedirectUri } = stateDoc.data();
     await stateDoc.ref.delete();
     try {
-        const redirectUri = `${req.headers.origin ?? appUrl}/auth/meta/callback`;
+        const redirectUri = savedRedirectUri ?? `${appUrl}/auth/meta/callback`;
         const accessToken = await (0, meta_auth_service_1.exchangeCodeForToken)(code, redirectUri);
         const pages = await (0, meta_auth_service_1.getUserPages)(accessToken);
         if (pages.length === 0) {

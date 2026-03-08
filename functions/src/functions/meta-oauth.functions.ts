@@ -40,7 +40,7 @@ export const metaOAuthStart = onRequest(async (req, res) => {
   const state = Buffer.from(JSON.stringify({ uid, ts: Date.now() })).toString("base64url");
 
   // Save state to Firestore so we can verify it on callback
-  await db.collection("oauthStates").doc(state).set({ uid, createdAt: new Date() });
+  await db.collection("oauthStates").doc(state).set({ uid, redirectUri, createdAt: new Date() });
 
   const oauthUrl = buildOAuthUrl(redirectUri, state);
   res.json({ url: oauthUrl });
@@ -70,11 +70,11 @@ export const metaOAuthCallback = onRequest(async (req, res) => {
     return;
   }
 
-  const { uid } = stateDoc.data() as { uid: string };
+  const { uid, redirectUri: savedRedirectUri } = stateDoc.data() as { uid: string; redirectUri?: string };
   await stateDoc.ref.delete();
 
   try {
-    const redirectUri = `${req.headers.origin ?? appUrl}/auth/meta/callback`;
+    const redirectUri = savedRedirectUri ?? `${appUrl}/auth/meta/callback`;
     const accessToken = await exchangeCodeForToken(code, redirectUri);
     const pages = await getUserPages(accessToken);
 

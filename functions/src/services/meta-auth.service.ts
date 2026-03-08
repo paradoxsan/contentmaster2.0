@@ -11,6 +11,7 @@ export function buildOAuthUrl(redirectUri: string, state: string): string {
     "pages_show_list",
     "instagram_basic",
     "instagram_content_publish",
+    "business_management",
   ].join(",");
 
   const params = new URLSearchParams({
@@ -61,10 +62,11 @@ export async function exchangeCodeForToken(
 }
 
 export async function getUserPages(accessToken: string) {
-  const res = await fetch(
-    `${META_GRAPH_URL}/me/accounts?fields=id,name,picture,instagram_business_account&access_token=${accessToken}`
-  );
+  const url = `${META_GRAPH_URL}/me/accounts?fields=id,name,picture,access_token,instagram_business_account,tasks&access_token=${accessToken}`;
+  const res = await fetch(url);
   const data = await res.json();
+
+  console.log("Meta /me/accounts response:", JSON.stringify(data));
 
   if (!res.ok || data.error) {
     throw new Error(data.error?.message ?? "Failed to fetch pages");
@@ -100,7 +102,7 @@ export async function saveMetaAccounts(
         name: page.name,
         profilePictureUrl: page.picture?.data?.url ?? null,
         pageId: page.id,
-        instagramBusinessAccountId: null,
+        instagramBusinessAccountId: page.instagram_business_account?.id ?? null,
         isActive: true,
         createdAt: new Date(),
         updatedAt: new Date(),
@@ -127,7 +129,7 @@ export async function saveMetaAccounts(
         );
         const igData = await igRes.json();
         if (igData.username) igName = `@${igData.username}`;
-      } catch {}
+      } catch { }
 
       batch.set(
         igRef,

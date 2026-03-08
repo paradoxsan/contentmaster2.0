@@ -43,7 +43,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signInWithFacebook() {
     const provider = new FacebookAuthProvider();
-    await signInWithPopup(auth, provider);
+    provider.addScope("pages_show_list");
+    provider.addScope("pages_read_engagement");
+    provider.addScope("pages_manage_posts");
+    provider.addScope("instagram_basic");
+    provider.addScope("instagram_content_publish");
+    provider.addScope("business_management");
+    const result = await signInWithPopup(auth, provider);
   }
 
   async function logout() {
